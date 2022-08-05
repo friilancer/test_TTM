@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Account from "./Account";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Login from "./Login";
+import Register from "./Register";
+import Home from "./Home";
+import React, { useState } from 'react'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
+const UserStateContext = React.createContext({})
+const UserDispatchContext = React.createContext(undefined)
 
 function App() {
+  const [user, setUser] = useState({
+    email: '',
+    token: '',
+    timeout: 0
+  })
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register"  element={<Register />} />
+        <Route path="/account"  element={<Account />} />
+      </Routes>
+  </BrowserRouter>
   );
 }
 
