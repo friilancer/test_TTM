@@ -4,12 +4,17 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap"
 import { hasSpecialChar, isAlphaNumeric, isEmail } from "./helpers";
+import { useNavigate } from "react-router-dom";
+import { useUserAuthDispatchContext } from "./App";
 
 const Register = () => {
     const [email, setEmail] = useState({
         text: '',
         error: false
     })
+
+    const authDispatch = useUserAuthDispatchContext()
+    const navigate = useNavigate()
 
     useEffect(() => {
         setEmail({
@@ -49,6 +54,7 @@ const Register = () => {
     const onSubmit = async(e: React.SyntheticEvent) => {
         e.preventDefault()
         try{
+            
             if(!isEmail(email.text)) {
                 setEmail({
                     ...email,
@@ -66,9 +72,16 @@ const Register = () => {
                 email: email.text,
                 password: password.text
             })
-            console.log(data)
             
-            status === 200 && alert('Registered')
+            if(status === 200){
+                localStorage.setItem('testToken', data.token)
+                localStorage.setItem('testEmail', email.text)
+                authDispatch({
+                    email: email.text,
+                    token: data.token
+                })
+                navigate("/home")
+            }
         }catch(e){
             console.log(e)
             alert('Registration Failed')

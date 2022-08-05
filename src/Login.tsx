@@ -3,14 +3,26 @@ import axios from "axios";
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap"
-import { hasSpecialChar, isAlphaNumeric, isEmail } from "./helpers";
+import { hasSpecialChar, isAlphaNumeric, isEmail, addMinutes } from "./helpers";
+import { useUserAuthDispatchContext } from "./App";
+import { useNavigate, useLocation, Location } from "react-router-dom";
+
+interface stateType {
+    from: { pathname: string | undefined }
+}
 
 const Login = () => {
     const [email, setEmail] = useState({
         text: '',
         error: false
     })
+    const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state as stateType
 
+    const fromPage = state?.from?.pathname || "/home";
+
+    const authDispatch = useUserAuthDispatchContext()
     useEffect(() => {
         setEmail({
             ...email,
@@ -65,10 +77,16 @@ const Login = () => {
             const {status, data} = await axios.post(`https://reqres.in/api/login`, {
                 email: email.text,
                 password: password.text
-            })
-            console.log(data)
-            
-            status === 200 && alert('Registered')
+            })        
+            if(status === 200){
+                localStorage.setItem('testToken', data.token)
+                localStorage.setItem('testEmail', email.text)
+                authDispatch({
+                    email: email.text,
+                    token: data.token
+                })
+                navigate(fromPage, {replace: true})
+            }
         }catch(e){
             console.log(e)
             alert('Registration Failed')

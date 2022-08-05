@@ -5,4 +5,8 @@ export const isAlphaNumeric = (text:string) : boolean => (/[a-z]+/ig.test(text) 
 
 export const hasSpecialChar = (text: string) : boolean => (/\W+|_/g.test(text))
 
-export const isString = (text:string) : boolean => typeof text === 'string'
+export const isString = (text:string) : boolean => typeof text === 'string' && text.length > 0
+
+export const addMinutes = (date: Date, minutes:number):Date => {
+    return new Date(date.getTime() + minutes*60000);
+}

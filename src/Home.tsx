@@ -5,6 +5,7 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./components/Navbar";
 import EditUser from "./components/EditUser";
+import { useUserAuthStateContext } from "./App";
 
 
 interface user {
@@ -25,6 +26,7 @@ interface response {
 
 const Home = () => {
     const [users, setUsers] = useState<Array<user>>([])
+    const userAuth = useUserAuthStateContext()
     const [showEditUserModal, setShowEditUserModal] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
@@ -92,6 +94,7 @@ const Home = () => {
         <Container fluid="md">
             <NavBar />
             <h2 className="text-center m-4">Users Page</h2>
+            <h6>You're now logged in as {userAuth.email}</h6>
             <EditUser id={currentSelection.id} username={`${currentSelection.first_name} ${currentSelection.last_name}`}  onSave={handleSave} show={showEditUserModal} onHide={handleAddClose} />
             <Row>
                 {

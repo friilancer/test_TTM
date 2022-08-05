@@ -3,32 +3,72 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from "./Login";
 import Register from "./Register";
 import Home from "./Home";
-import React, { useState } from 'react'
+import React, { useState, createContext, useContext } from 'react'
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-const UserStateContext = React.createContext({})
-const UserDispatchContext = React.createContext(undefined)
+interface UserStateContextType {
+  email: string,
+  token: string
+}
 
-function App() {
+const UserStateContext = createContext<any|null>(null)
+
+const UserDispatchContext = createContext<any|null>(null)
+
+const savedToken: string | null = localStorage.getItem('testToken')
+const savedEmail: string | null = localStorage.getItem('testEmail')
+
+export const App = () => {
   const [user, setUser] = useState({
-    email: '',
-    token: '',
-    timeout: 0
+    email: savedEmail || '',
+    token: savedToken || '',
   })
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register"  element={<Register />} />
-        <Route path="/account"  element={<Account />} />
-      </Routes>
-  </BrowserRouter>
+    <UserStateContext.Provider value={user}>
+      <UserDispatchContext.Provider value={setUser}>
+        <BrowserRouter>
+            <Routes>
+              <Route path="/home" element={
+                <ProtectedRoute>
+                    <Home />
+                </ProtectedRoute>
+              }/>
+              <Route path="*" element={<Login />} />
+              <Route path="/register"  element={<Register />} />
+              <Route path="/account"  element={<Account />} />
+            </Routes>
+        </BrowserRouter>
+        </UserDispatchContext.Provider>
+    </UserStateContext.Provider>
   );
 }
 
-export default App;
+export const useUserAuthStateContext = () => {
+
+  const context = useContext(UserStateContext);
+
+  if (context === undefined) {
+    throw new Error('UseUserAuthStateContext must be used within a provider');
+  }
+
+  return context
+
+}
+
+export const useUserAuthDispatchContext = () => {
+
+  const context = useContext(UserDispatchContext);
+
+  if (context === undefined) {
+    throw new Error('UseUserAuthDispatchContext must be used within a provider')
+  }
+
+  return context;
+
+}
