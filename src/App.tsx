@@ -39,9 +39,13 @@ export const App = () => {
                     <Home />
                 </ProtectedRoute>
               }/>
-              <Route path="*" element={<Login />} />
-              <Route path="/register"  element={<Register />} />
-              <Route path="/account"  element={<Account />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*"  element={<Register />} />
+              <Route path="/account"  element={
+                <ProtectedRoute>
+                  <Account />
+                </ProtectedRoute>
+              } />
             </Routes>
         </BrowserRouter>
         </UserDispatchContext.Provider>
